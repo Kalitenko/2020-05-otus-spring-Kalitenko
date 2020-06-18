@@ -7,7 +7,7 @@
     <import resource="streams.xml"/>
 
     <bean id="taskDao" class="ru.otus.spring.dao.TaskDaoCsv">
-        <constructor-arg index="0" name="inputStream" ref="csvFileInputStream"/>
+        <constructor-arg index="0" name="resource" value="tests.csv"/>
         <constructor-arg index="1" name="delimiter" value=";"/>
     </bean>
 

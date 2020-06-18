@@ -4,10 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util https://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="inputStreamFromCsv" name="inputStream, csvFileInputStream" class="java.io.FileInputStream">
-        <constructor-arg type="java.io.File" value="tests.csv"/>
-    </bean>
-
     <bean id="printStream" name="output" class="java.io.PrintStream">
         <constructor-arg type="java.io.OutputStream">
             <util:constant static-field="java.lang.System.out"/>
