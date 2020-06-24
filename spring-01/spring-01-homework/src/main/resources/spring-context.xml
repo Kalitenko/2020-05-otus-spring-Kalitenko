@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="streams.xml"/>
+
+    <bean id="taskDao" class="ru.otus.spring.dao.TaskDaoCsv">
+        <constructor-arg index="0" name="resource" value="tests.csv"/>
+        <constructor-arg index="1" name="delimiter" value=";"/>
+    </bean>
+
+    <bean id="taskServiceImp" name="testService" class="ru.otus.spring.service.TaskServiceImpl">
+        <constructor-arg ref="taskDao"/>
+    </bean>
+
+    <bean id="consoleServiceImpl" name="consoleService" class="ru.otus.spring.service.ConsoleServiceImpl">
+        <constructor-arg ref="printStream"/>
+    </bean>
+
+</beans>
