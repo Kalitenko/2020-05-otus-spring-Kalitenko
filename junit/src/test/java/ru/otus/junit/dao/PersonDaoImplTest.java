@@ -1,6 +1,5 @@
 package ru.otus.junit.dao;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.junit.domain.Person;
@@ -14,48 +13,54 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Класс PersonDaoImpl")
 class PersonDaoImplTest {
 
-    private PersonDaoImpl personDao = new PersonDaoImpl();
+    private PersonDaoImpl personDao() {
+        return new PersonDaoImpl(persons());
+    }
 
-    private List<Person> personList = new ArrayList<>();
-    private Person testPerson = new Person(42, "Ivan");
-    private Person overridePerson = new Person(22, "Ivan");
-
-    @BeforeEach
-    void init() {
-        personList.add(testPerson);
+    private List<Person> persons() {
+        List<Person> personList = new ArrayList<>();
+        personList.add(testPerson());
         personList.add(new Person(33, "Alex"));
         personList.add(new Person(22, "Vladimir"));
-        personDao.setPersonList(personList);
+        return personList;
+    }
+
+    private Person testPerson() {
+        return new Person(42, "Ivan");
     }
 
     // убрано из задания, оставляю для себя
     @DisplayName("существует поле - список Person-ов")
     @Test
     void shouldHavePersonList() {
-        assertDoesNotThrow(() -> personDao.getClass().getDeclaredField("personList"));
+        assertDoesNotThrow(() -> personDao().getClass().getDeclaredField("personList"));
     }
 
     @DisplayName("находит Person")
     @Test
     void shouldFindName() {
-        assertEquals(testPerson, personDao.getByName("Ivan"));
+        Person person = testPerson();
+        PersonDaoImpl personDao = personDao();
+        personDao.save(person);
+        assertEquals(person, personDao.getByName(person.getName()));
     }
 
-    @DisplayName("бросает PersonNotFoundException")
+    @DisplayName("бросает PersonNotFoundException если не найден")
     @Test
     void shouldThrowPersonNotFoundException() {
-        assertThrows(PersonNotFoundException.class, () -> personDao.getByName("Peter"));
+        assertThrows(PersonNotFoundException.class, () -> personDao().getByName("Incorrect name"));
     }
 
     @DisplayName("находит 3 Person")
     @Test
     void shouldFind3Persons() {
-        assertEquals(3, personDao.getAll().size());
+        assertEquals(3, personDao().getAll().size());
     }
 
     @DisplayName("удаляет Person")
     @Test
     void shouldDeleteName() {
+        PersonDaoImpl personDao = personDao();
         personDao.deleteByName("Ivan");
         assertThrows(PersonNotFoundException.class, () -> personDao.getByName("Ivan"));
     }
@@ -63,22 +68,24 @@ class PersonDaoImplTest {
     @DisplayName("бросает PersonNotFoundException")
     @Test
     void shouldThrowPersonNotFoundException2() {
-        assertThrows(PersonNotFoundException.class, () -> personDao.deleteByName("Peter"));
+        assertThrows(PersonNotFoundException.class, () -> personDao().deleteByName("Incorrect name"));
     }
 
     @DisplayName("должен добавить Person")
     @Test
     void shouldAddPerson() {
-        Person alex = personList.remove(1);
-        personDao.setPersonList(personList);
-        personDao.save(alex);
+        PersonDaoImpl personDao = personDao();
         assertEquals(3, personDao.getAll().size());
+        personDao.save(new Person(111, "NEW PERSON"));
+        assertEquals(4, personDao.getAll().size());
     }
 
     @DisplayName("должен перезаписать Person")
     @Test
     void shouldOverridePerson() {
-        personDao.save(overridePerson);
+        Person person = testPerson();
+        PersonDaoImpl personDao = personDao();
+        personDao.save(new Person(person.getAge() + 3, person.getName()));
         assertAll(
                 () -> assertEquals(3, personDao.getAll().size()),
 //                () -> assertTrue(personDao.getAll().stream().map(Person::getName)

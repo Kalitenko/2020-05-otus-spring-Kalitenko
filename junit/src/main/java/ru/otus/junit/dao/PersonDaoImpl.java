@@ -9,13 +9,14 @@ public class PersonDaoImpl implements PersonDao {
 
     private List<Person> personList;
 
+    public PersonDaoImpl(List<Person> personList) {
+        this.personList = personList;
+    }
+
     @Override
     public Person getByName(String name) throws PersonNotFoundException {
         Optional<Person> optionalPerson = personList.stream().filter(x -> x.getName().equals(name)).findAny();
-        if (optionalPerson.isPresent())
-            return optionalPerson.get();
-        else
-            throw new PersonNotFoundException(name + " not found");
+        return optionalPerson.orElseThrow(() -> new PersonNotFoundException(name + " not found"));
     }
 
     @Override
@@ -46,7 +47,4 @@ public class PersonDaoImpl implements PersonDao {
 
     }
 
-    public void setPersonList(List<Person> personList) {
-        this.personList = personList;
-    }
 }
