@@ -1,6 +1,7 @@
 package ru.otus.spring.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -27,6 +28,7 @@ class TaskServiceImplTest {
         taskService = new TaskServiceImpl(dao);
     }
 
+    @DisplayName("метод getAll() вызывает метод getAll() у dao и возвращает 3 задачи")
     @Test
     void getAll_shouldReturn3Tasks() {
         given(dao.getAll()).willReturn(Arrays.asList(

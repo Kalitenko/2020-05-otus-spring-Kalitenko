@@ -8,10 +8,10 @@ public class TestingServiceImpl implements TestingService {
 
     private final TaskService taskService;
     private final ConsoleService consoleService;
-    private final Integer numberOfRightAnswers;
+    private final int numberOfRightAnswers;
     private final boolean withClues;
 
-    public TestingServiceImpl(TaskService taskService, ConsoleService consoleService, Integer numberOfRightAnswers, boolean withClues) {
+    public TestingServiceImpl(TaskService taskService, ConsoleService consoleService, int numberOfRightAnswers, boolean withClues) {
         this.taskService = taskService;
         this.consoleService = consoleService;
         this.numberOfRightAnswers = numberOfRightAnswers;
@@ -20,13 +20,13 @@ public class TestingServiceImpl implements TestingService {
 
     @Override
     public void toTest() {
-        startTest();
-        testResult(testing(withClues), numberOfRightAnswers);
+        String name = startTest();
+        testResult(testing(withClues), numberOfRightAnswers, name);
         consoleService.closeInputStream();
     }
 
-    private void startTest() {
-        consoleService.requestFullName();
+    private String startTest() {
+        return consoleService.requestFullName();
     }
 
     private int testing(boolean withClues) {
@@ -46,11 +46,11 @@ public class TestingServiceImpl implements TestingService {
         return task.getRightAnswer().equals(answer);
     }
 
-    private void testResult(int count, int numberOfRightAnswers) {
+    private void testResult(int count, int numberOfRightAnswers, String name) {
         if (numberOfRightAnswers <= count) {
-            consoleService.print("Success!");
+            consoleService.print(name + ", you passed the test!");
         } else {
-            consoleService.print("Failed");
+            consoleService.print(name + ", you failed the test");
         }
     }
 

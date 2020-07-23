@@ -4,9 +4,9 @@ import java.util.List;
 
 public class Task {
 
-    private String question;
-    private String rightAnswer;
-    private List<String> answers;
+    private final String question;
+    private final String rightAnswer;
+    private final List<String> answers;
 
     public String getQuestion() {
         return question;

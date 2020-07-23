@@ -10,9 +10,6 @@ import ru.otus.spring.dao.TaskDao;
 import ru.otus.spring.dao.TaskDaoCsv;
 import ru.otus.spring.service.*;
 
-import java.io.InputStream;
-import java.io.PrintStream;
-
 @Configuration
 @PropertySource("classpath:application.properties")
 public class AppConfig {
@@ -28,16 +25,14 @@ public class AppConfig {
     }
 
     @Bean
-    public ConsoleService consoleService(PrintStream output, InputStream input) {
-        return new ConsoleServiceImpl(output, input);
+    public ConsoleService consoleService() {
+        return new ConsoleServiceImpl(System.out, System.in);
     }
 
     @Bean
     public TestingService testingService(TaskService taskService, ConsoleService consoleService,
-                                         @Value("#{ T(java.lang.Integer).parseInt('${numberOfRightAnswers}')}")
-                                                 Integer numberOfRightAnswers,
-                                         @Value("#{ T(java.lang.Boolean).valueOf('${withClues}')}")
-                                                 Boolean withClues) {
+                                         @Value("${numberOfRightAnswers}") int numberOfRightAnswers,
+                                         @Value("${withClues}") Boolean withClues) {
         return new TestingServiceImpl(taskService, consoleService, numberOfRightAnswers, withClues);
     }
 

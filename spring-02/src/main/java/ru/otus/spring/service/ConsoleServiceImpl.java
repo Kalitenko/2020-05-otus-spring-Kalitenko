@@ -8,11 +8,11 @@ import java.util.List;
 public class ConsoleServiceImpl implements ConsoleService {
 
     private final PrintStream printStream;
-    private final InputStream inputStream;
+    private final BufferedReader reader;
 
     public ConsoleServiceImpl(PrintStream printStream, InputStream inputStream) {
         this.printStream = printStream;
-        this.inputStream = inputStream;
+        this.reader = new BufferedReader(new InputStreamReader(inputStream));
     }
 
     @Override
@@ -29,7 +29,6 @@ public class ConsoleServiceImpl implements ConsoleService {
     public String requestFullName() {
         printStream.println("Please enter your name and surname");
         String fullName = null;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             fullName = reader.readLine();
 
@@ -60,7 +59,6 @@ public class ConsoleServiceImpl implements ConsoleService {
     @Override
     public String readAnswer() {
         String answer = null;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             answer = reader.readLine();
         } catch (IOException e) {
@@ -90,9 +88,10 @@ public class ConsoleServiceImpl implements ConsoleService {
     @Override
     public void closeInputStream() {
         try {
-            inputStream.close();
+            reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 }
