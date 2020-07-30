@@ -1,11 +1,9 @@
 package ru.otus.spring.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.domain.Task;
 
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service("testingService")
@@ -15,20 +13,18 @@ public class TestingServiceImpl implements TestingService {
     private final ConsoleService consoleService;
     private final int numberOfRightAnswers;
     private final boolean withClues;
-    private final MessageSource messageSource;
-    @Value("#{T(java.util.Locale).getDefault()}")
-    private Locale currentLocale;
+    private final LocalizationService localizationService;
 
     public TestingServiceImpl(TaskService taskService,
                               ConsoleService consoleService,
-                              @Value("${numberOfRightAnswers}") int numberOfRightAnswers,
-                              @Value("${withClues}") boolean withClues,
-                              MessageSource messageSource) {
+                              @Value("${number-of-right-answers}") int numberOfRightAnswers,
+                              @Value("${with-clues}") boolean withClues,
+                              LocalizationService localizationService) {
         this.taskService = taskService;
         this.consoleService = consoleService;
         this.numberOfRightAnswers = numberOfRightAnswers;
         this.withClues = withClues;
-        this.messageSource = messageSource;
+        this.localizationService = localizationService;
     }
 
     @Override
@@ -61,9 +57,9 @@ public class TestingServiceImpl implements TestingService {
 
     private void testResult(int count, int numberOfRightAnswers, String name) {
         if (numberOfRightAnswers <= count) {
-            consoleService.print(messageSource.getMessage("passed", new String[]{name}, currentLocale));
+            consoleService.print(localizationService.getMessage("passed", new String[]{name}));
         } else {
-            consoleService.print(messageSource.getMessage("failed", new String[]{name}, currentLocale));
+            consoleService.print(localizationService.getMessage("failed", new String[]{name}));
         }
     }
 

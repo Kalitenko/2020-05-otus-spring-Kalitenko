@@ -1,30 +1,26 @@
 package ru.otus.spring.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ru.otus.spring.dao.IOStreamException;
 import ru.otus.spring.domain.Task;
 
 import java.io.*;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class ConsoleServiceImpl implements ConsoleService {
 
     private final PrintStream printStream;
     private final BufferedReader reader;
-    private final MessageSource messageSource;
-    @Value("#{T(java.util.Locale).getDefault()}")
-    private Locale currentLocale;
+    private final LocalizationService localizationService;
 
     public ConsoleServiceImpl(@Value("#{T(java.lang.System).out}") PrintStream printStream,
                               @Value("#{T(java.lang.System).in}") InputStream inputStream,
-                              MessageSource messageSource) {
+                              LocalizationService localizationService) {
         this.printStream = printStream;
         this.reader = new BufferedReader(new InputStreamReader(inputStream));
-        this.messageSource = messageSource;
+        this.localizationService = localizationService;
     }
 
     @Override
@@ -39,38 +35,38 @@ public class ConsoleServiceImpl implements ConsoleService {
 
     @Override
     public String requestFullName() {
-        printStream.println(messageSource.getMessage("enter_name", new String[]{}, currentLocale));
-        String fullName = null;
+        printStream.println(localizationService.getMessage("enter.name"));
+        String fullName;
         try {
             fullName = reader.readLine();
 
         } catch (IOException e) {
             throw new IOStreamException();
         }
-        if (!checkFullName(fullName)) {
+        if (!isValidFullName(fullName)) {
             fullName = requestFullName();
         }
         return fullName;
     }
 
-    private boolean checkFullName(String fullName) {
+    private boolean isValidFullName(String fullName) {
         if (null == fullName)
             return false;
 
         String[] s = fullName.split("\\s+");
         if (s.length <= 1) {
-            printStream.println(messageSource.getMessage("name_surname", new String[]{}, currentLocale));
+            printStream.println(localizationService.getMessage("name.surname"));
             return false;
         }
         if (s.length > 2) {
-            printStream.println(messageSource.getMessage("intresting_name", new String[]{}, currentLocale));
+            printStream.println(localizationService.getMessage("interesting.name"));
         }
         return true;
     }
 
     @Override
     public String readAnswer() {
-        String answer = null;
+        String answer;
         try {
             answer = reader.readLine();
         } catch (IOException e) {
@@ -89,11 +85,11 @@ public class ConsoleServiceImpl implements ConsoleService {
         List<String> answers = task.getAnswers();
         String rightAnswer = task.getRightAnswer();
         if (withClues) {
-            printStream.println(messageSource.getMessage("choose_answer", new String[]{}, currentLocale) + "\n"
+            printStream.println(localizationService.getMessage("choose.answer") + "\n"
                     + String.join(" ", answers) + " "
-                    + messageSource.getMessage("clue", new String[]{}, currentLocale) + rightAnswer);
+                    + localizationService.getMessage("clue") + rightAnswer);
         } else {
-            printStream.println(messageSource.getMessage("answers", new String[]{}, currentLocale) + answers);
+            printStream.println(localizationService.getMessage("answers") + answers);
         }
     }
 
