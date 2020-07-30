@@ -1,0 +1,3 @@
+delimiter: ;
+number-of-right-answers: 3
+with-clues: true
